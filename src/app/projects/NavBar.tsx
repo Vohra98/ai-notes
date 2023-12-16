@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import AddEditProjectDialog from "@/components/AddEditProjectDialog";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const NavBar = () => {
     const [showAddEditProjectDialog, setShowAddEditProjectDialog] = useState(false); 
@@ -35,6 +36,7 @@ const NavBar = () => {
                             <Plus className="w-5 h-5 mr-2" />
                             Add project
                         </Button>
+                        <ThemeToggle />
                         <UserButton afterSignOutUrl="/"/>
                     </div>
                     
