@@ -35,6 +35,8 @@ const Project = ({project}: ProjectProps) => {
                     <p className="whitespace-pre-line">{project.content}</p>
                     <p className="whitespace-pre-line">{project.status}</p>
                     <p className="whitespace-pre-line">{project.priority}</p>
+                    <p className="whitespace-pre-line">{project.deadline?.toDateString()}</p>
+                    
                 </CardContent>
             </Card>
             <AddEditProjectDialog open={showEditProjectDialog} setOpen={setShowEditProjectDialog} projectToEdit={project}/>

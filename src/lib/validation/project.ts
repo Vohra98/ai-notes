@@ -5,6 +5,7 @@ export const createProjectSchema = z.object({
   content: z.string().optional(),
   status: z.string().optional(),
   priority: z.string().optional(),
+  deadline: z.coerce.date().optional(),
 });
 
 export type CreateProjectSchema = z.infer<typeof createProjectSchema>;
