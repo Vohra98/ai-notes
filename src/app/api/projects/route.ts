@@ -12,7 +12,7 @@ export async function POST(req: Request) {
             return Response.json({ error: "Invalid input" }, { status: 400 });
         }
 
-        const { title, content } = parseResult.data;
+        const { title, content, status, priority } = parseResult.data;
 
         const {userId} = auth();
 
@@ -24,6 +24,8 @@ export async function POST(req: Request) {
             data: {
                 title,
                 content,
+                status,
+                priority,
                 userId
             }
         });
@@ -46,7 +48,7 @@ export async function PUT(req: Request) {
             return Response.json({ error: "Invalid input" }, { status: 400 });
         }
 
-        const { id, title, content } = parseResult.data;
+        const { id, title, content, status, priority } = parseResult.data;
 
         const note = await prisma.project.findUnique({where: {id}});
 
@@ -64,7 +66,9 @@ export async function PUT(req: Request) {
             where: {id},
             data: {
                 title,
-                content
+                content,
+                priority,
+                status
             }
         });
 

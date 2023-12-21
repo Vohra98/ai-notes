@@ -3,6 +3,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import LoadingButton from "./ui/loading-button";
@@ -25,6 +32,8 @@ const AddEditProjectDialog = ({ open, setOpen, projectToEdit}: AddEditProjectDia
         defaultValues: {
             title: projectToEdit?.title || "",
             content: projectToEdit?.content || "",
+            status: projectToEdit?.status || "new",
+            priority: projectToEdit?.priority || "low",
         },
     });
 
@@ -58,7 +67,7 @@ const AddEditProjectDialog = ({ open, setOpen, projectToEdit}: AddEditProjectDia
 
         } catch (error) {
             console.error(error);
-            alert("something went wrong, Please try again later");
+            alert("something went wrong, Please try again");
         }
     };
 
@@ -125,6 +134,51 @@ const AddEditProjectDialog = ({ open, setOpen, projectToEdit}: AddEditProjectDia
                                 </FormItem>
                             )}
                         />
+                        <FormField
+                            control={form.control}
+                            name="status"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Status</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Current staus" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="new">New</SelectItem>
+                                            <SelectItem value="in-progres">In progress</SelectItem>
+                                            <SelectItem value="done">Done</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="priority"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>priority</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Current priority" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="low">Low</SelectItem>
+                                            <SelectItem value="medium">Medium</SelectItem>
+                                            <SelectItem value="high">High</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        
                         <DialogFooter className="gap-4 md:gap-0">
                             {projectToEdit && (
                                 <LoadingButton
