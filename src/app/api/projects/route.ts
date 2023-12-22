@@ -1,4 +1,6 @@
+import { projectsIndex } from "@/lib/db/pinecone";
 import prisma from "@/lib/db/prisma";
+import { getEmbedding } from "@/lib/openai";
 import { createProjectSchema, deleteProjectSchema, updateProjectSchema } from "@/lib/validation/project";
 import { auth } from "@clerk/nextjs";
 
@@ -20,18 +22,32 @@ export async function POST(req: Request) {
             return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const project = await prisma.project.create({
-            data: {
-                title,
-                content,
-                status,
-                priority,
-                deadline,
-                userId
-            }
+        const embedding = await getEmbeddingForProject(title, content, status, priority, deadline);
+
+        const project = await prisma.$transaction(async (tx) => {
+            const project = await tx.project.create({
+                data: {
+                    title,
+                    content,
+                    status,
+                    priority,
+                    deadline,
+                    userId
+                }
+            });
+
+            await projectsIndex.upsert([
+                {
+                    id: project.id,
+                    values: embedding,
+                    metadata: {userId}
+                }
+            ])
+
+            return project;
         });
 
-        return Response.json({project}, {status: 201});
+        return Response.json({ project }, {status: 201});
 
     } catch (error) {
         console.log(error);
@@ -63,15 +79,29 @@ export async function PUT(req: Request) {
             return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const updatedProject = await prisma.project.update({
-            where: {id},
-            data: {
-                title,
-                content,
-                priority,
-                status,
-                deadline
-            }
+        const embedding = await getEmbeddingForProject(title, content, status, priority, deadline);
+
+        const updatedProject = await prisma.$transaction(async (tx) => {
+            const updatedProject = await tx.project.update({
+                where: {id},
+                data: {
+                    title,
+                    content,
+                    status,
+                    priority,
+                    deadline
+                }
+            });
+
+            await projectsIndex.upsert([
+                {
+                    id,
+                    values: embedding,
+                    metadata: { userId }
+                }
+            ])
+
+            return updatedProject;
         });
 
         return Response.json({updatedProject}, {status: 200});
@@ -107,7 +137,10 @@ export async function DELETE(req: Request) {
             return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        await prisma.project.delete({where: {id}});
+        await prisma.$transaction(async (tx) => {
+            await tx.project.delete({where: {id}});
+            await projectsIndex.deleteOne(id);
+        });
 
         return Response.json({message: "Project Deleted"}, {status: 200});
 
@@ -115,4 +148,8 @@ export async function DELETE(req: Request) {
         console.log(error);
         return Response.json({ error: "Internal server error" }, { status: 500 });
     }
+}
+
+async function getEmbeddingForProject(title: string, content: string|undefined, status: string|undefined, priority: string|undefined, deadline: Date|undefined) {
+    return getEmbedding(title + "/n/n" + (content ?? '') + (status ?? '') + (priority ?? '') + (deadline?.toISOString() ?? ''))
 }

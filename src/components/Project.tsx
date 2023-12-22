@@ -41,17 +41,15 @@ const Project = ({project}: ProjectProps) => {
                         
                     </CardTitle>
                     <CardDescription className="flex flex-col gap-1 mt-4">
-                        <div>
+                        <span>
                             {date}
                             {wasUpdated && " (updated)"}
-                        </div>
+                        </span>
                         { project.deadline &&
-                            <div className={`flex gap-2 items-center ${deadlineApproching(project.deadline) < 3 ? 'text-red-500' : 'text-gray-500'}`}>
+                            <span className={`flex gap-2 items-center ${deadlineApproching(project.deadline) < 3 && project.status !== 'done' ? 'text-red-500' : 'text-gray-500'}`}>
                                 <Clock size={16} />
-                                <p className="">
-                                    {project.deadline?.toDateString()}
-                                </p>
-                            </div>
+                                {project.deadline?.toDateString()}
+                            </span>
                         }
                     </CardDescription>
                 </CardHeader>
