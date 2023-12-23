@@ -9,6 +9,7 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import AddEditProjectDialog from "@/components/AddEditProjectDialog";
 import ThemeToggle from "@/components/ThemeToggle";
+import AiChatButton from "@/components/AiChatButton";
 
 const NavBar = () => {
     const [showAddEditProjectDialog, setShowAddEditProjectDialog] = useState(false); 
@@ -36,6 +37,7 @@ const NavBar = () => {
                             <Plus className="w-5 h-5 mr-2" />
                             Add project
                         </Button>
+                        <AiChatButton />
                         <ThemeToggle />
                         <UserButton afterSignOutUrl="/"/>
                     </div>

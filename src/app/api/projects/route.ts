@@ -151,5 +151,5 @@ export async function DELETE(req: Request) {
 }
 
 async function getEmbeddingForProject(title: string, content: string|undefined, status: string|undefined, priority: string|undefined, deadline: Date|undefined) {
-    return getEmbedding(title + "/n/n" + (content ?? '') + (status ?? '') + (priority ?? '') + (deadline?.toISOString() ?? ''))
+    return getEmbedding(title + "\n\n" + (content ?? '') + (status ?? '') + (priority ?? '') + (deadline?.toISOString() ?? ''))
 }
